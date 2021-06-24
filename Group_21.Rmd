@@ -2,29 +2,71 @@
 title: "World happiness"
 author: '21'
 date: "2021/6/24"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, comment = NA)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r libraries}
+library(ggplot2)
+library(dplyr)
+library(moderndive)
+library(ISLR)
+library(skimr)
+library(plotly)
+library(tidyr)
+library(jtools)
+library(tidyverse)
+library(kableExtra)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r data, echo = FALSE, eval = TRUE}
+happiness <- read_csv("/Users/yangwanqing/Desktop/happiness1.csv")
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+# Introduction{#sec:Intro}
+# Exploratory Data Analysis {#sec:EDA}
+# Formal Data Analysis {#sec:FDA}
+To begin to analysis the world happiness dataset, we need to check the correlation between the six explanatory variables to avoid the problem of multicollinearity.
+```{r,echo=FALSE}
+happiness[,4:9]%>%
+  cor()%>%
+kable(caption = '\\label{tab:summaries} Correlation coefficient table of explanatory variables.') %>% kable_styling(latex_options = "hold_position")
+```
+From our correlation table we can see that the correlation between our Logged GDP and Healthy life expectancy is 0.859, which is a strong positive linear relationship.And the Logged GDP and Social support also have the high degree of collinearity, the correlation between this two variables is 0.785.So we remove Healthy life expectancy and Logged GDP.Then, using the remaining 4 explanatory variables to perform stepwise regression, and observe whether the remaining variables need to be eliminated.
+```{r,echo=FALSE}
+model<-lm(score~Social+Freedom+Generosity+corruption,data=happiness)
+step(model)
+```
+According to the results of stepwise regression, we choose the model with the smallest AIC as the final model.Then,we fit the following linear model to the data.
+$$\widehat{\mbox{score}}_{\mbox{i}} = \widehat{\alpha} +
+{\widehat\beta}*{\mbox{Social}}_{\mbox{i}} +\widehat{\gamma}*{\mbox{Freedom}}_{\mbox{i}}+\widehat{\delta}*{\mbox{corruption}}_{\mbox{i}}$$
+
+where
+
+• the $\widehat{\mbox{score}}_{\mbox{i}}$: the happiness score of the $i\mbox{th}$ country.
+
+• the $\widehat{\alpha}$: the intercept of the regression line.
+
+• the $\widehat{\beta}$: the coefficient for the first explanatory variable ${\mbox{Social}}$.
+
+• the $\widehat{\gamma}$: the coefficient for the second explanatory variable ${\mbox{Freedom}}$.
+
+• the $\widehat{\delta}$: the coefficient for the second explanatory variable ${\mbox{corruption}}$.
+
+When this model is fitted to the data, the following estimates of ${\alpha}$  (intercept) and ${\beta}$,${\gamma}$ and ${\delta}$ are returned:
+
+```{r,echo=FALSE}
+model<-lm(score~Social+Freedom+corruption,data=happiness)
+get_regression_table(model)%>%
+  dplyr::select(term,estimate)%>%
+  kable(caption = '\\label{tab:reg} Estimates of the parameters from the fitted linear
+regression model.') %>% kable_styling(latex_options = 'HOLD_position')
+```
+```
+
+
