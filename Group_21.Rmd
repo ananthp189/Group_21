@@ -71,7 +71,7 @@ regression model.') %>% kable_styling(latex_options = 'HOLD_position')
 According to this table, the coefficient for social support tells us that, taking all other variables in the model into account and holding them constant, there is an associated increase, on average,every increase of 1 unit in the social support score increases the happiness index score by approximately 5.63 units.In the same way, when the freedom score of life choice increases by 1 unit, the happiness index score also increases by approximately 2.23 units.On the contrary, for every increase of 1 unit in the score for corruption, the total score of happiness index decreases by 1.23 units.
 
 Before we can continue to use the fitted model, we must check the model's assumptions. It is best to consider these according to the residual plot in Figure 2.
-```{r residplots,echo=FALSE, fig.width = 13, fig.align = "center",fig.cap = "\\label{fig:resids} Scatterplots of the residuals by Social,Freedom,corruption and a histogram of the residuals", fig.pos = 'H', message = FALSE}
+```{r residplots,echo=FALSE, fig.width = 13, fig.align = "center",fig.cap = "\\label{fig:resids} Scatterplots of the residuals by Social,Freedom,corruption,fitted value and the histogram of residuals.", fig.pos = 'H', message = FALSE}
 regression.points <- get_regression_points(model)
 p1 <- ggplot(regression.points, aes(x = Social, y = residual)) +
       geom_jitter(width = 0.5) +
@@ -85,10 +85,14 @@ p3 <- ggplot(regression.points, aes(x = corruption, y = residual)) +
       geom_jitter(width = 0.5) +
       labs(x = "corruption", y = "Residual") +
       geom_hline(yintercept = 0, col = "blue")
-p4 <- ggplot(regression.points, aes(x = residual)) +
+p4<-ggplot(regression.points, aes(x = score_hat, y = residual)) +
+  geom_point() +
+  labs(x = "Fitted values", y = "Residual") +
+  geom_hline(yintercept = 0, col = "blue", size = 1) 
+p5<-ggplot(regression.points, aes(x = residual)) +
       geom_histogram(color = "white") +
       labs(x = "Residual")
-grid.arrange(p1, p2,p3,p4, ncol = 2)
+grid.arrange(p1,p2,p3,p4,p5,ncol = 2)
 ```
 The assumptions of the residuals having mean zero and constant variability across all values of the explanatory variable appear to be valid in this case.According to the three different explanatory variables scatter plots, it can be concluded that the residuals are uniformly distributed above and below the zero line, so the mean is 0. The residuals are randomly distributed around the zero line, and the distribution of the residuals is constant across all fitted values, so there is no obvious pattern or change in the variant.And also the histogram supports the assumption of normal distribution error.
 
