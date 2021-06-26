@@ -23,21 +23,128 @@ library(jtools)
 library(tidyverse)
 library(kableExtra)
 library(gridExtra)
+library(corrplot)
+library(car)
+library(reshape2)
+library(knitr)
+library(fmsb)
+library(maps)
+library(mapproj)
 ```
 
 ```{r data, echo = FALSE, eval = TRUE}
-happiness <- read_csv("/Users/yangwanqing/Desktop/happiness1.csv")
+happiness <- read_csv("happiness1.csv")
 ```
 
 # Introduction{#sec:Intro}
 # Exploratory Data Analysis {#sec:EDA}
+```{r rename, echo = FALSE, eval = TRUE}
+happiness_rename <- happiness %>%
+  rename(
+    Country_name = 'Country name',
+    Regional_indicator = 'Regional indicator',
+    Happy_score = score,
+    Logged_GDP = LoggedGDP,
+    Social_support = Social,
+    Healthy_life_expectancy = expectancy,
+    Perceptions_of_corruption = corruption
+  )
+```
+
+```{r boxplot, echo = FALSE, eval = TRUE, out.width = '70%', fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:box} Boxplots."}
+
+data1 <- happiness_rename %>%
+  melt(id = c("Country_name", "Regional_indicator", "Happy_score")) %>%
+  filter(variable != "Healthy_life_expectancy" & variable != "Logged_GDP")
+p1 <- ggplot(data1, aes(x=variable, y=value, fill=variable)) + geom_boxplot(varwidth = TRUE)
+
+data2 <- happiness_rename %>%
+  melt(id = c("Country_name", "Regional_indicator", "Happy_score")) %>%
+  filter(variable == "Healthy_life_expectancy")
+p2 <- ggplot(data2, aes(x=variable, y=value, fill=variable)) + geom_boxplot(varwidth = TRUE)
+
+data3 <- happiness_rename %>%
+  melt(id = c("Country_name", "Regional_indicator", "Happy_score")) %>%
+  filter(variable == "Logged_GDP")
+p3 <- ggplot(data3, aes(x=variable, y=value, fill=variable)) + geom_boxplot(varwidth = TRUE)
+
+lay <- rbind(c(1,1),
+             c(2,3))
+
+p4 <- grid.arrange(p1, p2, p3, layout_matrix = lay)
+```
+
+```{r, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE}
+summary(happiness_rename[3:9]) %>%
+kable(caption = '\\label{tab:summaries} Summary statistics.') %>%
+  kable_styling(latex_options = "hold_position")
+
+```
 # Visualization of the data {#sec:VIS}
+```{r barplot, echo = FALSE, eval = TRUE, out.width = '70%', fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:bar} The 5 happiest contries."}
+
+ggplot(head(happiness_rename,5), aes(x = Country_name, y =Happy_score))+
+  geom_bar(stat="identity", aes(reorder(Country_name, - Happy_score), fill = Country_name, width = 0.7))+
+  geom_text(aes(label = Happy_score), vjust=-0.3)
+
+```
+
+
+
+```{r radarplot, echo = FALSE, eval = TRUE, fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:radar} Finland versus UK."}
+data4 <- happiness_rename[, 4:9]
+maxm <- apply(happiness_rename[,4:9], 2, max)
+minm <- apply(happiness_rename[,4:9], 2, min)
+maxmin <- data.frame(
+  Logged_GDP = c(11.647, 6.635),
+  Social_support = c(0.983, 0.463),
+  Healthy_life_expectancy = c(76.953, 48.478),
+  Freedom = c(0.97, 0.382),
+  Generosity = c(0.542, -0.288),
+  Perceptions_of_corruption = c(0.939, 0.082))
+data5 <- rbind(maxmin, data4[1,], data4[17,])
+
+colors_border = c('#f19cbb', '#0099ff')
+colors_in = c('#f19cbb55', '#0099ff1a')
+radarchart( data5, axistype=6, pcol= colors_border, 
+            pfcol= colors_in, plwd=2, plty=1, cglcol="grey", 
+            cglty=1, axislabcol="grey", vlcex=0.8 
+)
+
+legend(x=1.5, y=1, legend = c("Finland", "UK"), bty = "n", 
+       pch=20, col=colors_in , text.col = "black", cex=0.8, pt.cex=3)
+
+```
+
+```{r map, echo = FALSE, eval = TRUE, out.width = '70%', fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:map} Map."}
+
+WorldData <- map_data('world')
+happiness<-read.csv("happiness1.csv")
+df<-select(happiness, region=Country.name,value=score)
+
+Total <- WorldData[WorldData$region %in% df$region, ]
+Total$value <- df$value[match(Total$region, df$region)]
+
+  ggplot() +
+  geom_map(data = WorldData, map = WorldData,
+           aes(x = long, y = lat, group = group, map_id=region),
+           fill = "white", colour = "black", size=0.5) + 
+  geom_map(data = df, map=WorldData,
+           aes(fill=value, map_id=region),
+           colour="black", size=0.5) +
+  coord_map("rectangular", lat0=0, xlim=c(-180,180), ylim=c(-60, 90)) +
+  scale_fill_continuous(low="darkred", high="thistle1", guide="colorbar") +
+  scale_y_continuous(breaks=c()) +
+  scale_x_continuous(breaks=c()) +
+  labs(fill="Score", title="World Happiness Report 2021", x="", y="") +
+  theme_dark()
+```
 # Formal Data Analysis {#sec:FDA}
 To begin to analysis the world happiness dataset, we need to check the correlation between the six explanatory variables to avoid the problem of multicollinearity.
-```{r,echo=FALSE}
+```{r corrplot, echo = FALSE,eval = TRUE, out.width = '70%', fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:corr} Correlation coefficient table."}
 happiness[,4:9]%>%
   cor()%>%
-kable(caption = '\\label{tab:summaries} Correlation coefficient table of explanatory variables.') %>% kable_styling(latex_options = "hold_position")
+  corrplot(method = "number")
 ```
 From our correlation table we can see that the correlation between our Logged GDP and Healthy life expectancy is 0.859, which is a strong positive linear relationship.And the Logged GDP and Social support also have the high degree of collinearity, the correlation between this two variables is 0.785.So we remove Healthy life expectancy and Logged GDP.Then, using the remaining 4 explanatory variables to perform stepwise regression, and observe whether the remaining variables need to be eliminated.
 ```{r,echo=FALSE}
