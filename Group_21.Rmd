@@ -75,7 +75,7 @@ p4 <- grid.arrange(p1, p2, p3, layout_matrix = lay)
 ```
 
 ```{r, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE}
-summary(happiness_rename[3:9]) %>%
+summary(happiness[3:9]) %>%
 kable(caption = '\\label{tab:summaries} Summary statistics.') %>%
   kable_styling(latex_options = "hold_position")
 
