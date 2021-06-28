@@ -1,5 +1,5 @@
 ---
-title: "World happiness"
+title: "Analysisi of the World happiness"
 author: 'Group 21'
 date: "2021/6/24"
 output:
@@ -33,11 +33,29 @@ library(mapproj)
 ```
 
 ```{r data, echo = FALSE, eval = TRUE}
-happiness <- read_csv("happiness1.csv")
+happiness <- read_csv("Group_21.csv")
 ```
 
 # Introduction{#sec:Intro}
+The World Happiness Report is a landmark survey of the state of global happiness. However, because of the covid-19 prevalence, people’s lives get reshaped largely. More seriously, As the pandemic struck, there was a large and immediate decline in mental health in many countries worldwide. Therefore, it seems necessary to give more importance to happiness and well-being thereby better achieving and measuring social and economic development. Our study mainly serves two purposes. One is about finding and evaluating the influential factors of happiness. The other is about tracing the size and distribution of happiness impacts. We adopts the multiple regression analysis, using the data from the Gallup World Poll. There are six variables to measure happiness scores. After processing the data, we finally get three appropriate influential factors.
+
+At first, we choose seven variables with one outcome variable, Happy score and six explanatory variables, they are Logged GDP per capita, Social support, Healthy life expectancy, Freedom to make life choices, Generosity and Perceptions_of_corruption. The following is interpretations of each variable.
+
+Happy score: respondents were asked to rate their possible lives from one to ten, with 1 being the worst and 10 being the best.
+Logged GDP per capita: it means logged GDP index from 149 countries.
+
+Social support: it means if the participants could find someone’s help when they are in trouble.
+
+Healthy life expectancy: it means the expected life expectancy.
+
+Freedom to make life choices: it means if the participants are satisfied with their freedom to choose what they do in life.
+
+Generosity: it means if the participants are generous after asking if they have donated money to charity organizations.
+
+Perceptions of corruption: it means if the participants are conscious of the corruption within the government and business.
+
 # Exploratory Data Analysis {#sec:EDA}
+We visualize the values as boxplots:
 ```{r rename, echo = FALSE, eval = TRUE}
 happiness_rename <- happiness %>%
   rename(
@@ -73,25 +91,24 @@ lay <- rbind(c(1,1),
 
 p4 <- grid.arrange(p1, p2, p3, layout_matrix = lay)
 ```
-
-```{r, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE}
+```{r, echo = FALSE, eval = TRUE,warning = FALSE, message = FALSE}
 summary(happiness[3:9]) %>%
-kable(caption = '\\label{tab:summaries} Summary statistics.') %>%
+kable(caption = '\\label{tab:summaries} Summary statistics for observations with chosen variables.') %>%
   kable_styling(latex_options = "hold_position")
 
 ```
 # Visualization of the data {#sec:VIS}
-```{r barplot, echo = FALSE, eval = TRUE, out.width = '70%', fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:bar} The 5 happiest contries."}
+We can visualize our data by producing histogram and radarplot, where seeing as we have several countries, we shall plot the bars or lines using different colours for each country: 
+```{r barplot, echo = FALSE, eval = TRUE, out.width = '60%', fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:bar} The top 5 happiest contries."}
 
 ggplot(head(happiness_rename,5), aes(x = Country_name, y =Happy_score))+
   geom_bar(stat="identity", aes(reorder(Country_name, - Happy_score), fill = Country_name, width = 0.7))+
   geom_text(aes(label = Happy_score), vjust=-0.3)
 
 ```
+Figure 2 shows the 5 happiest countries. Finland gets the highest happy score with 7.842, followed by Denmark at 7.62. in addition, the differences between those five countries are small, less than 0.4, and all scores are greater than 7.4. 
 
-
-
-```{r radarplot, echo = FALSE, eval = TRUE, fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:radar} Finland versus UK."}
+```{r radarplot, echo = FALSE, eval = TRUE,out.width='70%', fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:radar} Comparisons between Finland and the UK from six index."}
 data4 <- happiness_rename[, 4:9]
 maxm <- apply(happiness_rename[,4:9], 2, max)
 minm <- apply(happiness_rename[,4:9], 2, min)
@@ -115,11 +132,11 @@ legend(x=1.5, y=1, legend = c("Finland", "UK"), bty = "n",
        pch=20, col=colors_in , text.col = "black", cex=0.8, pt.cex=3)
 
 ```
+Figure 3 compares those six dimensions that Finland obtains with those that UK obtains. There are obvious differences between the perceptions of corruption and generosity, with the UK getting relatively much higher values. Conversely, when referring to Freedom indicators, Finland has a slightly higher value. Besides, it owns similar grades among the other three aspects.
 
-```{r map, echo = FALSE, eval = TRUE, out.width = '70%', fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:map} Map."}
-
+```{r map, echo = FALSE, eval = TRUE, out.width = '70%', fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:map} World happiness score map."}
 WorldData <- map_data('world')
-happiness<-read.csv("happiness1.csv")
+happiness<-read.csv("Group_21.csv")
 df<-select(happiness, region=Country.name,value=score)
 
 Total <- WorldData[WorldData$region %in% df$region, ]
@@ -139,6 +156,8 @@ Total$value <- df$value[match(Total$region, df$region)]
   labs(fill="Score", title="World Happiness Report 2021", x="", y="") +
   theme_dark()
 ```
+Figure 4 has displayed a happiness score map globally based on the World Happiness Report 2021. We can see that most countries in the western area have high scores whereas the eastern countries have low scores, which demonstrates that people in western countries lead happier and more fulfilling lives.
+
 # Formal Data Analysis {#sec:FDA}
 To begin to analysis the world happiness dataset, we need to check the correlation between the six explanatory variables to avoid the problem of multicollinearity.
 ```{r corrplot, echo = FALSE,eval = TRUE, out.width = '70%', fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:corr} Correlation coefficient table."}
@@ -177,7 +196,7 @@ regression model.') %>% kable_styling(latex_options = 'HOLD_position')
 ```
 According to this table, the coefficient for social support tells us that, taking all other variables in the model into account and holding them constant, there is an associated increase, on average,every increase of 1 unit in the social support score increases the happiness index score by approximately 5.63 units.In the same way, when the freedom score of life choice increases by 1 unit, the happiness index score also increases by approximately 2.23 units.On the contrary, for every increase of 1 unit in the score for corruption, the total score of happiness index decreases by 1.23 units.
 
-Before we can continue to use the fitted model, we must check the model's assumptions. It is best to consider these according to the residual plot in Figure 2.
+Before we can continue to use the fitted model, we must check the model's assumptions. It is best to consider these according to the residual plot in Figure 6.
 ```{r residplots,echo=FALSE, fig.width = 13, fig.align = "center",fig.cap = "\\label{fig:resids} Scatterplots of the residuals by Social,Freedom,corruption,fitted value and the histogram of residuals.", fig.pos = 'H', message = FALSE}
 regression.points <- get_regression_points(model)
 p1 <- ggplot(regression.points, aes(x = Social, y = residual)) +
@@ -202,6 +221,11 @@ p5<-ggplot(regression.points, aes(x = residual)) +
 grid.arrange(p1,p2,p3,p4,p5,ncol = 2)
 ```
 The assumptions of the residuals having mean zero and constant variability across all values of the explanatory variable appear to be valid in this case.According to the three different explanatory variables scatter plots, it can be concluded that the residuals are uniformly distributed above and below the zero line, so the mean is 0. The residuals are randomly distributed around the zero line, and the distribution of the residuals is constant across all fitted values, so there is no obvious pattern or change in the variant.And also the histogram supports the assumption of normal distribution error.
+After hypothesis testing, we will analyze the confidence interval and set the confidence level to 95%.
+```{r ci, echo=FALSE}
+confint(model,level = .95)
+```
+The data in the table shows that the coefficient range of Social support affecting happiness score is 4.64 to 6.61, and the coefficient range of Freedom is 1.16 to 3.29. The most explanatory variable corruption affects the corresponding variable in the range of -1.83 to -0.62. Does not contain 0, indicating that the selected independent variables and their coefficients are valid, and as analyzed above, their given coefficients are the mean value of the interval.
 
 # Conclusions {#sec:Conc}
 
