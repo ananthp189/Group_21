@@ -202,7 +202,10 @@ p5<-ggplot(regression.points, aes(x = residual)) +
 grid.arrange(p1,p2,p3,p4,p5,ncol = 2)
 ```
 The assumptions of the residuals having mean zero and constant variability across all values of the explanatory variable appear to be valid in this case.According to the three different explanatory variables scatter plots, it can be concluded that the residuals are uniformly distributed above and below the zero line, so the mean is 0. The residuals are randomly distributed around the zero line, and the distribution of the residuals is constant across all fitted values, so there is no obvious pattern or change in the variant.And also the histogram supports the assumption of normal distribution error.
-
+#Confidence Interval
+```{r ci }
+confint(model, level = .95)
+```
 # Conclusions {#sec:Conc}
 
 
