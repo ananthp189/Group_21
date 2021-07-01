@@ -180,7 +180,7 @@ Figure 6 compares those six dimensions that Finland obtains with those that UK o
 WorldData <- map_data('world')
 happiness<-read.csv("Group_21.csv")
 df<-select(happiness, region=Country.name,value=score)
-
+df$region<-str_replace_all(df$region, 'United States', 'USA')
 Total <- WorldData[WorldData$region %in% df$region, ]
 Total$value <- df$value[match(Total$region, df$region)]
 
