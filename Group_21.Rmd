@@ -15,8 +15,6 @@ references:
       given: Richard
     - family: Sach
       given: Jeffrey
-    - family:  Layard  
-      given: Richard
     - family: De Nev
       given: Jan-Emmanuel
     volume: 1
