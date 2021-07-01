@@ -5,7 +5,44 @@ date: "2021/6/24"
 output:
   pdf_document: default
   html_document: default
-bibliography: reference.bib
+references:
+  - id: hlsn21
+    title: World Happiness Report 2021
+    author:
+    - family: Helliwell
+      given: John F
+    - family: Layard
+      given: Richard
+    - family: Sach
+      given: Jeffrey
+    - family:  Layard  
+      given: Richard
+    - family: De Nev
+      given: Jan-Emmanuel
+    volume: 1
+    issue: 
+    publisher: The South African Journal of economics
+    page: 
+    type: book
+    issued:
+      year: 2021
+      
+  - id: gra21
+    title: A Tale of Three Countries: What is the Relationship Between COVID‐19, Lockdown and Happiness?
+    author:
+    - family: Greyling
+      given: T
+    - family: Rossouw
+      given: S
+    - family: Adhikari
+      given: T
+    volume: 89
+    issue: 
+    publisher: Sustainable Development Solutions Network
+    page: 25-43
+    type: article-journal
+    issued:
+      year: 2021
 ---
 
 ```{r setup, include=FALSE}
