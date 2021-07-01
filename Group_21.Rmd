@@ -200,7 +200,7 @@ regression model.') %>% kable_styling(latex_options = 'HOLD_position')
 ```
 According to this table, the coefficient for social support tells us that, taking all other variables in the model into account and holding them constant, there is an associated increase. On average, every increase of 1 unit in the social support score increases the happiness index score by approximately 5.63 units. In the same way, when the freedom score of life choice increases by 1 unit, the happiness index score also increases by approximately 2.23 units. On the contrary, for every increase of 1 unit in the score for corruption, the total score of happiness index decreases by 1.23 units.
 
-Before we can continue to use the fitted model, we must check the model's assumptions. It is best to consider these according to the residual plot in Figure 8.
+Before we can continue to use the fitted model, we must check the model's assumptions. It is best to consider these according to the residual plot in Figure 9.
 ```{r residplots,echo=FALSE, fig.width = 13, fig.align = "center",fig.cap = "\\label{fig:resids} Scatterplots of the residuals by Social,Freedom,corruption,fitted value and the histogram of residuals.", fig.pos = 'H', message = FALSE}
 regression.points <- get_regression_points(model)
 p1 <- ggplot(regression.points, aes(x = Social, y = residual)) +
