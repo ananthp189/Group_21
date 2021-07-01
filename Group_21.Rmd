@@ -1,10 +1,48 @@
 ---
-title: "Analysis of the World happiness"
+title: "Analysis of The World Happiness"
 author: 'Group 21'
 date: "2021/6/24"
 output:
   pdf_document: default
   html_document: default
+references:
+  - id: hlsn21
+    title: World Happiness Report 2021
+    author:
+    - family: Helliwell
+      given: John F
+    - family: Layard
+      given: Richard
+    - family: Sach
+      given: Jeffrey
+    - family:  Layard  
+      given: Richard
+    - family: De Nev
+      given: Jan-Emmanuel
+    volume: 1
+    issue: 
+    publisher: The South African Journal of economics
+    page: 
+    type: book
+    issued:
+      year: 2021
+      
+  - id: gra21
+    title: "A Tale of Three Countries: What is the Relationship Between COVID‐19, Lockdown and Happiness?"
+    author:
+    - family: Greyling
+      given: T
+    - family: Rossouw
+      given: S
+    - family: Adhikari
+      given: T
+    volume: 89
+    issue: 
+    publisher: Sustainable Development Solutions Network
+    page: 25-43
+    type: article-journal
+    issued:
+      year: 2021
 ---
 
 ```{r setup, include=FALSE}
@@ -30,6 +68,8 @@ library(knitr)
 library(fmsb)
 library(maps)
 library(mapproj)
+library(bibtex)
+library(latexpdf)
 ```
 
 ```{r data, echo = FALSE, eval = TRUE}
@@ -37,7 +77,7 @@ happiness <- read_csv("Group_21.csv")
 ```
 
 # Introduction{#sec:Intro}
-Happiness depends on many factors in our lives and the things going on in our surrounding world. This world happiness survey gives insights into how happiness changes in our lives. As we know, covid-19 has a huge impact on our lives that it has made us think about people’s subjective well-being in the world and the factors affecting it. More seriously, “As the pandemic struck, there was a large and immediate decline in mental health in many countries worldwide” (Helliwell, Layard, Sachs, De Neve, Aknin, & Wang, 2021, p.10). Therefore, it seems necessary to give more importance to happiness and well-being, thereby better achieving and measuring social and economic development (Greyling, Rossouw, & Adhikari, 2021). Our study mainly serves two purposes. One purpose is to find and evaluate the influential factors of happiness. The other is to trace the size and distribution of happiness impacts. We adopt the multiple regression analysis based on the data from the Gallup World Poll. There are six variables to measure happiness scores of 149 countries or territories. After processing the data, we finally get three influential factors.
+Happiness depends on many factors in our lives and the things going on in our surrounding world. This world happiness survey gives insights into how happiness changes in our lives. As we know, covid-19 has a huge impact on our lives that it has made us think about people’s subjective well-being in the world and the factors affecting it. More seriously, “As the pandemic struck, there was a large and immediate decline in mental health in many countries worldwide” [@hlsn21]. Therefore, it seems necessary to give more importance to happiness and well-being, thereby better achieving and measuring social and economic development [@gra21]. Our study mainly serves two purposes. One purpose is to find and evaluate the influential factors of happiness. The other is to trace the size and distribution of happiness impacts. We adopt the multiple regression analysis based on the data from the Gallup World Poll. There are six variables to measure happiness scores of 149 countries or territories. After processing the data, we finally get three influential factors.
 
 At first, we choose seven variables with one outcome variable, Happy score and six explanatory variables, they are Logged GDP per capita, Social support, Healthy life expectancy, Freedom to make life choices, Generosity and Perceptions of corruption. The following is interpretations of each variable.
 
@@ -241,3 +281,4 @@ In the future we can consider more factors to have better insights on this happi
 We can use a different approach and also can fit different models by considering the topics mentioned above.Moreover, our study could be improved by adding the individual’s daily happiness score, not just the average happiness scores based on countries. Besides, it will be useful to consider the death rate among every nation so that we could better understand the influence of covid-19 pandemic has on happiness score index.
 
 # Reference {#sec:RE}
+
