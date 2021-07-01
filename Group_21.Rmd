@@ -1,7 +1,7 @@
 ---
 title: "Analysis of The World Happiness"
-author: 'Group 21'
-date: "2021/6/24"
+author: 'Group 21-Ananth Padakannaya,Nivedita Patil,Li Wang,Wanqing Yang,Boyao Ma'
+date: "2021/7/02"
 output:
   pdf_document: default
   html_document: default
@@ -237,6 +237,8 @@ get_regression_table(model)%>%
 regression model.') %>% kable_styling(latex_options = 'HOLD_position')
 ```
 According to this table, the coefficient for social support tells us that, taking all other variables in the model into account and holding them constant, there is an associated increase. On average, every increase of 1 unit in the social support score increases the happiness index score by approximately 5.63 units. In the same way, when the freedom score of life choice increases by 1 unit, the happiness index score also increases by approximately 2.23 units. On the contrary, for every increase of 1 unit in the score for corruption, the total score of happiness index decreases by 1.23 units.
+
+So the final model is:$$\widehat{\mbox{score}}_{\mbox{i}} = 0.078 +5.626*{\mbox{Social}}_{\mbox{i}}+2.227*{\mbox{Freedom}}_{\mbox{i}}-1.225*{\mbox{corruption}}_{\mbox{i}}$$
 
 Before we can continue to use the fitted model, we must check the model's assumptions. It is best to consider these according to the residual plot in Figure 9.
 ```{r residplots,echo=FALSE, fig.width = 13, fig.align = "center",fig.cap = "\\label{fig:resids} Scatterplots of the residuals by Social,Freedom,corruption,fitted value and the histogram of residuals.", fig.pos = 'H', message = FALSE}
