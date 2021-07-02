@@ -75,7 +75,7 @@ happiness <- read_csv("Group_21.csv")
 ```
 
 # Introduction{#sec:Intro}
-Happiness of an individual depends on multiple factors and the surrounding environment plays a key role in determining it. This survey on world happiness gives an insight into how happiness changes in our lives. Covid-19 has an adverse impact on our lives and bring to attention the people’s subjective well-being in the world at the moment and the factors affecting it. “As the pandemic struck, there was a large and immediate decline in mental health in many countries worldwide”[@hlsn21]. Therefore, it seems necessary to give more importance to happiness and well-being, thereby achieving better social and economic development [@gra21]. Our study mainly aims to serve two purposes. Firstly ,to find and evaluate the influential factors of happiness. Secondly, to trace the size and distribution of happiness globally. We adopt the multiple regression analysis based on the data from the Gallup World Poll. There are six variables to measure happiness scores of 149 countries or territories. After processing the data, we finally get three influential factors.
+Happiness of an individual depends on multiple factors and the surrounding environment plays a key role in determining it. This survey on world happiness gives an insight into how happiness changes in our lives. Covid-19 has an adverse impact on our lives and it brings to attention the people’s subjective well-being in the world at the moment and the factors affecting it. “As the pandemic struck, there was a large and immediate decline in mental health in many countries worldwide”[@hlsn21]. Therefore, it seems necessary to give more importance to happiness and well-being, thereby achieving better social and economic development [@gra21]. Our study mainly aims to serve two purposes. Firstly ,to find and evaluate the influential factors of happiness. Secondly, to trace the size and distribution of happiness globally. We adopt the multiple regression analysis based on the data from the Gallup World Poll. There are six variables to measure happiness scores of 149 countries or territories. After processing the data, we finally get three influential factors.
 
 # Exploratory Data Analysis {#sec:EDA}
 At first, we choose seven variables with one outcome variable, Happy score and six explanatory variables. They are as follows: Logged GDP per capita, Social support, Healthy life expectancy, Freedom to make life choices, Generosity and Perceptions of corruption. The following is the interpretation of each of these variables in the data observed.
@@ -141,7 +141,7 @@ Table 1 describes some basic features of those variables. For example, the avera
 
 # Visualization of the data {#sec:VIS}
 We can visualize our data by producing histogram and radarplot, whereby taking note that we have several countries to compare, we shall plot the bars or lines using different colours for each country:
-```{r barplot, echo = FALSE, eval = TRUE, out.width = '70%', fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:bar} The 5 happiest contries."}
+```{r barplot, echo = FALSE, eval = TRUE, out.width = '70%', fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:bar} The 5 happiest countries."}
 ggplot(head(happiness_rename,5), aes(x = Country_name, y =Happy_score))+
   geom_bar(stat="identity", aes(reorder(Country_name, - Happy_score), fill = Country_name))+
   geom_text(aes(label = Happy_score), vjust=-0.2, size = 5 )+
@@ -149,7 +149,7 @@ ggplot(head(happiness_rename,5), aes(x = Country_name, y =Happy_score))+
   guides(fill=F)
 ```
 Figure 4 shows the top 5 happiest countries. Finland gets the highest happy score with 7.842, followed by Denmark at 7.62. in addition, the differences between those five countries are small, less than 0.4, and all scores are greater than 7.4.
-```{r barplot2, echo = FALSE, eval = TRUE, out.width = '70%', fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:bar} The 5 most unhappy contries."}
+```{r barplot2, echo = FALSE, eval = TRUE, out.width = '70%', fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:bar} The 5 most unhappy countries."}
 ggplot(tail(happiness_rename,5), aes(x = Country_name, y =Happy_score))+
   geom_bar(stat="identity", aes(reorder(Country_name, - Happy_score), fill = Country_name))+
   geom_text(aes(label = Happy_score), vjust=-0.2, size = 5)+
