@@ -1,7 +1,7 @@
 ---
-title: "Analysis of the World happiness"
-author: 'Group 21'
-date: "2021/6/24"
+title: "Analysis of The World Happiness"
+author: 'Group 21-Ananth Padakannaya,Nivedita Patil,Li Wang,Wanqing Yang,Boyao Ma'
+date: "2021/7/02"
 output:
   pdf_document: default
   html_document: default
@@ -15,8 +15,6 @@ references:
       given: Richard
     - family: Sach
       given: Jeffrey
-    - family:  Layard  
-      given: Richard
     - family: De Nev
       given: Jan-Emmanuel
     volume: 1
@@ -69,6 +67,7 @@ library(fmsb)
 library(maps)
 library(mapproj)
 library(bibtex)
+library(latexpdf)
 ```
 
 ```{r data, echo = FALSE, eval = TRUE}
@@ -76,8 +75,7 @@ happiness <- read_csv("Group_21.csv")
 ```
 
 # Introduction{#sec:Intro}
-Happiness of an individual depends on multiple factors and the surrounding environment plays a key role in determining it. This survey on world happiness gives an insight into how happiness changes in our lives. Covid-19 has an adverse impact on our lives and bring to attention the people’s subjective well-being in the world at the moment and the factors affecting it. “As the pandemic struck, there was a large and immediate decline in mental health in many countries worldwide” as per [@hlsn21]. Therefore, it seems necessary to give more importance to happiness and well-being, thereby achieving better social and economic development [@gra21]. Our study mainly aims to serve two purposes. Firstly ,To find and evaluate the influential factors of happiness. Secondly, To trace the size and distribution of happiness globally. We adopt the multiple regression analysis based on the data from the Gallup World Poll. There are six variables to measure happiness scores of 149 countries or territories. After processing the data, we finally get three influential factors.
-
+Happiness of an individual depends on multiple factors and the surrounding environment plays a key role in determining it. This survey on world happiness gives an insight into how happiness changes in our lives. Covid-19 has an adverse impact on our lives and it brings to attention the people’s subjective well-being in the world at the moment and the factors affecting it. “As the pandemic struck, there was a large and immediate decline in mental health in many countries worldwide”[@hlsn21]. Therefore, it seems necessary to give more importance to happiness and well-being, thereby achieving better social and economic development [@gra21]. Our study mainly aims to serve two purposes. Firstly ,we aim to find and evaluate the influential factors of happiness. Secondly, we aim to trace the size and distribution of happiness globally. We adopt the multiple regression analysis based on the data from the Gallup World Poll. There are six variables to measure happiness scores of 149 countries or territories. After processing the data, we finally get three influential factors.
 
 # Exploratory Data Analysis {#sec:EDA}
 At first, we choose seven variables with one outcome variable, Happy score and six explanatory variables. They are as follows: Logged GDP per capita, Social support, Healthy life expectancy, Freedom to make life choices, Generosity and Perceptions of corruption. The following is the interpretation of each of these variables in the data observed.
@@ -92,10 +90,9 @@ Healthy life expectancy (expectancy): it denotes the expected life expectancy.
 
 Freedom to make life choices (Freedom): it denotes if the participants are satisfied with their freedom to choose what they do in life.
 
-Generosity: it means if the participants are generous after asking if they have donated money to charity organizations.
+Generosity: it denotes if the participants are generous after asking if they have donated money to charity organizations.
 
 Perceptions of corruption (corruption): it denotes if the participants are conscious of the corruption within the government and business.
-
 
 We visualize the values as boxplots:
 ```{r rename, echo = FALSE, eval = TRUE}
@@ -117,19 +114,16 @@ data1 <- happiness_rename %>%
   filter(variable != "Healthy_life_expectancy" & variable != "Logged_GDP")
 p1 <- ggplot(data1, aes(x=variable, y=value, fill=variable)) + geom_boxplot(varwidth = TRUE) + guides(fill=F)
 p1
-
 data2 <- happiness_rename %>%
   melt(id = c("Country_name", "Regional_indicator", "Happy_score")) %>%
   filter(variable == "Healthy_life_expectancy")
 p2 <- ggplot(data2, aes(x=variable, y=value, fill=variable)) + geom_boxplot(varwidth = TRUE) + guides(fill=F)
 p2
-
 data3 <- happiness_rename %>%
   melt(id = c("Country_name", "Regional_indicator", "Happy_score")) %>%
   filter(variable == "Logged_GDP")
 p3 <- ggplot(data3, aes(x=variable, y=value, fill=variable)) + geom_boxplot(varwidth = TRUE) + guides(fill=F)
 p3
-
 ```
 Figure 1 shows the descriptive statistics of four variables - Social support, Freedom, Generosity and Perceptions of corruption. It is obvious that apart from Generosity, people in more than half of the countries grade more than 0.6 on Social support, Freedom and Perceptions of corruption although there are some outliers lower than 0.5. And figure 2 shows half of the population has a life span of 60 to 70 years. The figure 3 shows the median of Logged GDP is near 9.5.
 
@@ -138,47 +132,43 @@ Next we use table to illustrate the details of all seven variables.
 summary(happiness[3:9]) %>%
 kable(caption = '\\label{tab:summaries} Summary statistics for observations with chosen variables.') %>%
   kable_styling(latex_options = "hold_position", full_width = F, font_size = 8)
-
 ```
 Table 1 describes some basic features of those variables. For example, the average happiness score is 5.533 and the median is 5.534. It demonstrates that people’s feelings of happiness or subjective well-beings are neither high nor low.
 
 # Visualization of the data {#sec:VIS}
-We can visualize our data by producing histogram and radarplot, whereby taking note that we have several countries to compare, we shall plot the bars or lines using different colours for each country: 
-
-```{r barplot, echo = FALSE, eval = TRUE, out.width = '70%', fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:bar} The 5 happiest contries."}
+We can visualize our data by producing histogram and radarplot, whereby taking note that we have several countries to compare, we shall plot the bars or lines using different colours for each country:
+```{r barplot, echo = FALSE, eval = TRUE, out.width = '70%', fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:bar} The 5 happiest countries."}
 ggplot(head(happiness_rename,5), aes(x = Country_name, y =Happy_score))+
   geom_bar(stat="identity", aes(reorder(Country_name, - Happy_score), fill = Country_name))+
   geom_text(aes(label = Happy_score), vjust=-0.2, size = 5 )+
   theme(axis.title =element_text(size=14), axis.text=element_text(size=14))+
   guides(fill=F)
 ```
-Figure 4 shows the top 5 happiest countries. Finland gets the highest happy score with 7.842, followed by Denmark at 7.62. in addition, the differences between those five countries are small, less than 0.4, and all scores are greater than 7.4. 
-```{r barplot2, echo = FALSE, eval = TRUE, out.width = '70%', fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:bar} The 5 most unhappy contries."}
+Figure 4 shows the top 5 happiest countries. Finland gets the highest happy score with 7.842, followed by Denmark at 7.62. in addition, the differences between those five countries are small, less than 0.4, and all scores are greater than 7.4.
+```{r barplot2, echo = FALSE, eval = TRUE, out.width = '70%', fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:bar} The 5 most unhappy countries."}
 ggplot(tail(happiness_rename,5), aes(x = Country_name, y =Happy_score))+
   geom_bar(stat="identity", aes(reorder(Country_name, - Happy_score), fill = Country_name))+
   geom_text(aes(label = Happy_score), vjust=-0.2, size = 5)+
   theme(axis.title =element_text(size=14), axis.text=element_text(size=14))+
   guides(fill=F)
 ```
-Figure 5 shows the five most unhappy countries. Afghanistan takes the position as the most unhappy country with the score of 2.523. And the other four countries have similar scores lower than 3.6. Other than Afghanistan from South Asia, other four countries are in Africa.
+Figure 5 shows the 5 most unhappy countries. Afghanistan takes the position as the most unhappy country with the score of 2.523. And the other four countries have similar scores lower than 3.6. Other than Afghanistan from South Asia, other four countries are in Africa.
 ```{r radarplot, echo = FALSE, eval = TRUE, out.width='80%',fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:radar} Comparisons between Finland and the UK from six indexes."}
 data4 <- happiness_rename[, 4:9]
 maxm <- apply(happiness_rename[,4:9], 2, max)
 minm <- apply(happiness_rename[,4:9], 2, min)
 data5 <- rbind(maxm, minm, data4[1,], data4[17,])
-
 colors_border = c('#f19cbb', '#0099ff')
 colors_in = c('#f19cbb55', '#0099ff1a')
 radarchart( data5, axistype=6, pcol= colors_border, 
             pfcol= colors_in, plwd=2, plty=1, cglcol="grey", 
             cglty=1, axislabcol="grey", vlcex=0.8 
 )
-
 legend(x=1.5, y=1.1, legend = c("Finland", "UK"), bty = "n", 
        pch=20, col=colors_in , text.col = "black", cex=0.8, pt.cex=3)
-
 ```
 Figure 6 compares those six dimensions that Finland obtains with those that UK obtains. There are obvious differences between the perceptions of corruption and generosity, with the UK getting comparatively much higher values. Conversely, when referring to Freedom indicators, Finland has a slightly higher value. Besides, it owns similar grades among the other three aspects.
+
 ```{r map, echo = FALSE, eval = TRUE, out.width='70%',fig.pos = 'H', fig.align = "center", fig.cap = "\\label{fig:map} World happiness score map."}
 WorldData <- map_data('world')
 happiness<-read.csv("Group_21.csv")
@@ -186,7 +176,6 @@ df<-select(happiness, region=Country.name,value=score)
 df$region<-str_replace_all(df$region, 'United States', 'USA')
 Total <- WorldData[WorldData$region %in% df$region, ]
 Total$value <- df$value[match(Total$region, df$region)]
-
   ggplot() +
   geom_map(data = WorldData, map = WorldData,
            aes(x = long, y = lat, group = group, map_id=region),
@@ -210,7 +199,7 @@ happiness[,4:9]%>%
   cor()%>%
   corrplot(method = "number")
 ```
-From our correlation table we can see that the correlation between our Logged GDP and Healthy life expectancy is 0.859, which is a strong positive linear relationship. And the Logged GDP and Social support also have the high degree of collinearity. The correlation between this two variables is 0.785. So we remove Healthy life expectancy and Logged GDP. Then, using the remaining 4 explanatory variables to perform stepwise regression, and observe whether the remaining variables need to be eliminated.
+From our correlation table we can see that the correlation between our Logged GDP and Healthy life expectancy is 0.859, which is a strong positive linear relationship. And the Logged GDP and Social support also have the high degree of collinearity. The correlation between this two variables is 0.785. So we remove Healthy life expectancy and Logged GDP. We then use the remaining four explanatory variables to perform stepwise regression, and observe whether the remaining variables need to be eliminated.
 ```{r,echo=FALSE}
 model<-lm(score~Social+Freedom+Generosity+corruption,data=happiness)
 step(model)
@@ -240,6 +229,8 @@ get_regression_table(model)%>%
 regression model.') %>% kable_styling(latex_options = 'HOLD_position')
 ```
 According to this table, the coefficient for social support tells us that, taking all other variables in the model into account and holding them constant, there is an associated increase. On average, every increase of 1 unit in the social support score increases the happiness index score by approximately 5.63 units. In the same way, when the freedom score of life choice increases by 1 unit, the happiness index score also increases by approximately 2.23 units. On the contrary, for every increase of 1 unit in the score for corruption, the total score of happiness index decreases by 1.23 units.
+
+So the final model is:$$\widehat{\mbox{score}}_{\mbox{i}} = 0.078 +5.626*{\mbox{Social}}_{\mbox{i}}+2.227*{\mbox{Freedom}}_{\mbox{i}}-1.225*{\mbox{corruption}}_{\mbox{i}}$$
 
 Before we can continue to use the fitted model, we must check the model's assumptions. It is best to consider these according to the residual plot in Figure 9.
 ```{r residplots,echo=FALSE, fig.width = 13, fig.align = "center",fig.cap = "\\label{fig:resids} Scatterplots of the residuals by Social,Freedom,corruption,fitted value and the histogram of residuals.", fig.pos = 'H', message = FALSE}
@@ -276,10 +267,9 @@ The data in the table shows that the coefficient range of Social support affecti
 # Conclusions {#sec:Conc}
 In our study, to explore what will influence people’s evaluations of happiness, we have used six indicators to measure the happiness score. We have used the stepwise regression analysis to select variables. Then, we fit the multiple linear models with three factors as Social, Freedom, and corruption. It can be concluded that social support and freedom to make life choices are positively related to people’s happiness and perceptions of corruption which can affect the happiness score. In other words, if a person could get help whenever required or if a person is free to make their own choices, they will perceive contented and joyful life. If we consider interpersonal relationships and emotional needs, the results appear to be reasonable and significant. Besides, if a person believes that their government or companies are corrupt, there will be a decline in the happiness score. Personal level provides better insights on the above all results. According to country-level statistics, residents of western countries lead a happier life than eastern, especially those from Northern European nations like Finland and Denmark. Furthermore, the size of happiness obtained by the top five countries is three times larger than that obtained by the bottom five nations. It shows there is such a huge gap in individual happiness and satisfaction globally.
 
-# Extention of study {#sec:ES}
+# Future work {#sec:FW}
 In the future we can consider more factors to have better insights on this happiness report such as the population of the country: as population increases, the diversity increases and providing the same facilities for everyone becomes difficult due to a larger pressure on limited resources, facilities available in a country: as European countries may have better facilities because they are able to allocate facilities efficiently due to a lower population, the effect of natural calamities: some countries may face extreme conditions such as flood, tsunami, etc. more frequently which affects human life, the effect of pollution: Population affects the environment and eventually affects human life.
 
 We can use an alternative approach and fit different models by considering the topics mentioned above.Moreover, our study could be improved by adding the individual’s daily happiness score, not just the average yearly happiness scores based on countries. Additionally, it will be useful to consider the death rate among every nation so that we could better understand the influence of covid-19 pandemic has on happiness score index.
 
-# Reference {#sec:RE}
-\bibliography{reference}
+# References{#sec:RE}
